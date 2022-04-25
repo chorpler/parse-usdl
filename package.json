@@ -1,5 +1,5 @@
 {
-  "name": "parse-usdl",
+  "name": "parse-usdl-2020",
   "version": "3.3.0",
   "author": "David Sargeant <chorpler@gmail.com>",
   "description": "parse Pdf417 barcode data from US driver licenses",
@@ -9,6 +9,7 @@
     "type": "git",
     "url": "https://github.com/chorpler/parse-usdl"
   },
+  "private": true,
   "keywords": [
     "barcode",
     "code128",
