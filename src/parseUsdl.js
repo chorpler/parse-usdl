@@ -2,14 +2,24 @@ const CodeToKey = require('./keys').CodeToKey
 
 const lineSeparator = '\n'
 
-const defaultOptions = { suppressErrors: false }
+const defaultOptions = { suppressErrors: false, debug: false }
 
 exports.parse = function parseCode128(str, options = defaultOptions) {
   const props = {}
   const rawLines = str.trim().split(lineSeparator)
-  const lines = rawLines.map((rawLine) => sanitizeData(rawLine))
-  let started
-  lines.slice(0, -1).forEach((line) => {
+  let lines = rawLines.map((rawLine) => sanitizeData(rawLine))
+  let started = false
+  let oldlines = lines.slice(0)
+  lines = lines.slice(0, -1)
+  let count = lines.length
+  for (let i = 0; i < count; i++) {
+    let line = lines[i]
+    if (options.debug === true) {
+      console.log(`Scanning line ${i + 1}: ~ ${line} ~`)
+    }
+    if (line.trim() === '' || line.indexOf('') > -1) {
+      continue
+    }
     if (!started) {
       if (line.indexOf('ANSI ') === 0) {
         started = true
@@ -19,10 +29,10 @@ exports.parse = function parseCode128(str, options = defaultOptions) {
           const lineArray = line.split('DLDAQ')
           line = 'DAQ' + lineArray[1]
         } else {
-          return
+          continue
         }
       } else {
-        return
+        continue
       }
     }
 
@@ -32,16 +42,55 @@ exports.parse = function parseCode128(str, options = defaultOptions) {
 
     if (!key) {
       if (options.suppressErrors) {
-        return
+        continue
       } else {
-        throw new Error('unknown code: ' + code)
+        throw new Error(`unknown code: '` + code + `'`)
       }
     }
 
     if (isSexField(code)) value = getSex(code, value)
 
     props[key] = isDateField(key) ? getDateFormat(value) : value
-  })
+  }
+  // lines.forEach((line) => {
+  //   let idx = lines.indexOf(line);
+  //   console.log(`Scanning line ${idx+1}: ~ ${line} ~`);
+  //   if(line.indexOf("") > -1) {
+  //     return;
+  //   }
+  //   if (!started) {
+  //     if (line.indexOf('ANSI ') === 0) {
+  //       started = true
+
+  //       // has DLDAQ
+  //       if (line.includes('DLDAQ')) {
+  //         const lineArray = line.split('DLDAQ')
+  //         line = 'DAQ' + lineArray[1]
+  //       } else {
+  //         return
+  //       }
+  //     } else {
+  //       return
+  //     }
+  //   }
+
+  //   let code = getCode(line)
+  //   let value = getValue(line)
+  //   let key = getKey(code)
+
+  //   if (!key) {
+  //     if (options.suppressErrors) {
+  //       return
+  //     } else {
+  //       throw new Error(`unknown code: '` + code + `'`)
+  //     }
+  //   }
+
+  //   if (isSexField(code)) value = getSex(code, value)
+
+  //   props[key] = isDateField(key) ? getDateFormat(value) : value
+
+  // })
 
   return props
 }

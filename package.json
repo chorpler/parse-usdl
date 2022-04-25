@@ -1,12 +1,13 @@
 {
   "name": "parse-usdl",
-  "version": "3.2.0",
-  "main": "index.js",
+  "version": "3.3.0",
+  "author": "David Sargeant <chorpler@gmail.com>",
   "description": "parse Pdf417 barcode data from US driver licenses",
+  "main": "index.js",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mvayngrib/parse-usdl"
+    "url": "https://github.com/chorpler/parse-usdl"
   },
   "keywords": [
     "barcode",
